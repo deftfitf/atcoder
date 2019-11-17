@@ -5,14 +5,10 @@ object Main {
   def main(args: Array[String]): Unit = {
     val sc = new java.util.Scanner(System.in)
 
-    val N = sc.nextInt()
-    val d = Array.fill(N)(sc.nextInt())
-
-    val res = for {
-      i <- (0 until N-1)
-      j <- (i+1 until N)
-    } yield d(i) * d(j)
-    println(res.sum)
+    val _ = sc.nextInt(); sc.nextLine()
+    val S = sc.nextLine()
+    val (l, r) = S.splitAt(S.length / 2)
+    println(if (l == r) "Yes" else "No")
   }
 
 }

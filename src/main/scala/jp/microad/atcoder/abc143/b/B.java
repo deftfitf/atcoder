@@ -1,4 +1,4 @@
-package jp.microad.atcoder.abc145.b;
+package jp.microad.atcoder.abc143.b;
 
 import java.util.Arrays;
 import java.util.Scanner;
