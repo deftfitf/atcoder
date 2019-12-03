@@ -2,69 +2,51 @@ package lib.graph
 
 object BellmanFord {
 
+  case class Edge(v: Int, w: Int)
+
   def main(args: Array[String]): Unit = {
     val sc = new java.util.Scanner(System.in)
-    val V, E = sc.nextInt()
-    val edge = Array.fill(E) {
+    val INF = Int.MaxValue
+    val NIL = -1
+    val V, E, r = sc.nextInt()
+    val G = Array.fill(V)(List[Edge]())
+    (0 until E) foreach { _ =>
       val u, v, cost = sc.nextInt()
-      Edge(u, v, cost)
+      G(u) ::= Edge(v, cost)
     }
 
-    allPointsPairBellmanFord(edge)(E, V) match {
-      case Some(result) =>
-        println(result.map(_.map {
-          case DISTANCE_INF => "INF"
-          case d => d.toString
-        }. mkString(" ")).mkString("\n"))
-      case None =>
-        println("NEGATIVE CYCLE")
-    }
-  }
 
-  final private[this] case class Edge(u: Int, v: Int, cost: Int)
-
-  final private[this] def bellmanFord(
-    edges: Seq[Edge],
-    start: Int
-  )(E: Int = edges.length, V: Int): Option[IndexedSeq[Long]] = {
-    val distance = Array.fill[Long](V)(DISTANCE_INF)
-    val parents = Array.fill(V)(PARENT_UNDEFINED)
-    distance(start) = 0
-
-    def relax(edge: Edge): Unit =
-      if (distance(edge.u) != DISTANCE_INF &&
-          distance(edge.v) > distance(edge.u) + edge.cost) {
-        distance(edge.v) = distance(edge.u) + edge.cost
-        parents(edge.v) = edge.u
+    val d = Array.fill(V)(INF)
+    val parent = Array.fill(V)(NIL)
+    def solve(): Boolean = {
+      (0 until V - 1) foreach { _ =>
+        (0 until V) foreach { u =>
+          G(u) foreach { edge =>
+            if (d(u) != INF && d(edge.v) > d(u) + edge.w) {
+              d(edge.v) = d(u) + edge.w
+              parent(edge.v) = u
+            }
+          }
+        }
       }
 
-    var i = 0
-    while (i < V - 1) {
-      edges foreach relax
-      i += 1
-    }
-
-    edges foreach { edge =>
-      if (distance(edge.u) != DISTANCE_INF &&
-          distance(edge.v) > distance(edge.u) + edge.cost)
-        return None
-    }
-    Some(distance)
-  }
-
-  final private[this] def allPointsPairBellmanFord(
-      edges: Seq[Edge]
-  )(E: Int = edges.length, V: Int): Option[IndexedSeq[IndexedSeq[Long]]] = {
-    import scala.collection.mutable
-    (0 until V). foldLeft (Option(mutable.ArrayBuilder.make[IndexedSeq[Long]]())) { case (reduced, next) =>
-      reduced match {
-        case Some(builder) => bellmanFord(edges, next)(E, V) map builder.+=
-        case None => None
+      var isCyclic = false
+      (0 until V - 1) foreach { u =>
+        G(u) foreach { edge =>
+          if (d(u) != INF && d(edge.v) > d(u) + edge.w) {
+            isCyclic = true
+          }
+        }
       }
-    } map (_.result())
-  }
+      isCyclic
+    }
 
-  final private[this] val DISTANCE_INF = Long.MaxValue / 2
-  final private[this] val PARENT_UNDEFINED = -1
+    d(r) = 0
+    solve()
+    val result = G.indices.map(d)
+      .map(w => if (w == INF) "INF" else w).mkString("\n")
+
+    println(result)
+  }
 
 }
