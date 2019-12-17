@@ -5,7 +5,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val _ = new java.util.Scanner(System.in)
 
-    val _ = 6
+    val N = 6
     val A = Array(-45, -41, -36, -36, 26, -32)
     val B = Array(22, -27, 53, 30, -38, -54)
     val C = Array(42, 56, -37, -75, -10, -6)
