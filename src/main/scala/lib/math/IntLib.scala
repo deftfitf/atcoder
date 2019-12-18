@@ -34,4 +34,19 @@ object IntLib {
     recursive(n, r)
   }
 
+  /**
+    * エラトステネスの篩によって, O(n*log(log(n)))で
+    * 2 ~ nまでの素数を判定する配列を返す
+    * @param n
+    * @return
+    */
+  def eratosthenes(n: Int): Seq[Int] = {
+    val upper = Math.sqrt(n)
+    def loop(lst: List[Int], used: List[Int]): List[Int] =
+      if (lst.head < upper) {
+        loop(lst.tail.filter(_ % lst.head != 0), lst.head :: used)
+      } else used.reverse ++ lst
+    loop((2 to n).toList, Nil)
+  }
+
 }
