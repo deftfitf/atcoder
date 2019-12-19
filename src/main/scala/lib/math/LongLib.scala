@@ -13,6 +13,6 @@ object LongLib {
     * 最小公倍数
     */
   def lcm(a: Long, b: Long): Long =
-    a * b / gcd(a, b)
+    a * (b / gcd(a, b))
 
 }
