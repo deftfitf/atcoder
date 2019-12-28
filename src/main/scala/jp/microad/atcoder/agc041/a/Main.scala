@@ -2,7 +2,6 @@ package jp.microad.atcoder.agc041.a
 
 object Main {
 
-  // TODO: ...
   def main(args: Array[String]): Unit = {
     val sc = new java.util.Scanner(System.in)
 
@@ -17,7 +16,7 @@ object Main {
     def solve(N: Long, A: Long, B: Long): Long = {
       val L = B - A
       if ((L - 1L) % 2L == 1L) L / 2L
-      else (B - 1L) min ((N - A) - 1L)
+      else (((A - 1) min (N - B)) + 1 + (B - A - 1) / 2)
     }
 
     println(solve(N, A, B))

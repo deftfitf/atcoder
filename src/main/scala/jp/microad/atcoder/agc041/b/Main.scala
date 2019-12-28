@@ -6,8 +6,9 @@ object Main {
   def main(args: Array[String]): Unit = {
     val sc = new java.util.Scanner(System.in)
 
-    val N, M, V, P = sc.nextInt()
-    val A = Array.fill(N)(sc.nextLong()).sorted
+    val N = sc.nextInt()
+    val M, V, P = sc.nextLong()
+    val A = Array.fill(N)(sc.nextLong()).sorted(Ordering.Long.reverse)
 
     // 最初のスコアからM人のジャッジがV問のスコアを1ずつあげる
     // その際に問題が大きい順に並べられP問が選ばれる
@@ -39,39 +40,27 @@ object Main {
     // これを ((V - (N - |Ai以下の数|)) * M) 点減らし切れればOK
     // もし減らしきらないうちに ((Aij + M) < Aij') のような Aij'が出てきてしまうと
     // ceil(残りの点 / M)の選択し分だけ勝てないものが出てくるので, それが > P の時NGです
-    def solve(N: Int, M: Int, V: Int, P: Int, A: Array[Long]): Int = {
+    def solve(N: Int, M: Long, V: Long, P: Long, A: Array[Long]): Int = {
       def check(i: Int): Boolean = {
-        val aLowerN = lowerBounds(A(i)) // A(i)以下の問題数
-        val aMLowerN = lowerBounds(A(i) + M)
-        val fixedProblems = N - aMLowerN // 常に勝てない問題数
-        if (fixedProblems >= P) return false // 常に勝てない問題数がP以上ならNG
-        val OK = (aLowerN.toLong * M.toLong) +
-          ((aLowerN until (aMLowerN min (N - P))).map(j => (A(i) + M) - A(j)).sum) +
-          ((P - 1) * M.toLong)
-        OK >= (M * V)
+        if (i + 1 <= P) return true
+        if (A(i) + M < A(P.toInt - 1)) return false
+        def loop(j: Int, acm: Long): Long =
+          if (j < i) loop(j + 1, acm + (((A(i) + M - A(j)) min M) max 0))
+          else acm + (N - i - 1) * M
+        loop(P.toInt - 1, P * M) >= (M * V)
       }
-      // lower 以下の A の要素数を返す
-      def lowerBounds(lower: Long): Int = {
-        def loop(left: Int, right: Int): Int = {
-          if (right - left > 1) {
-            val mid = left + (right - left) / 2
-            if (A(mid) > lower) loop(left, mid)
-            else loop(mid, right)
-          } else right
-        }
-        loop(-1, N)
-      }
+
       def lowerBounds2(): Int = {
         def loop(left: Int, right: Int): Int = {
           if (right - left > 1) {
             val mid = left + (right - left) / 2
-            if (check(mid)) loop(left, mid)
-            else loop(mid, right)
-          } else right
+            if (check(mid)) loop(mid, right)
+            else loop(left, mid)
+          } else left
         }
         loop(-1, N)
       }
-      N - lowerBounds2()
+      lowerBounds2() + 1
     }
 
     println(solve(N, M, V, P, A))
