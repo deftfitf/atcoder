@@ -53,30 +53,29 @@ object POJ2104 {
     val N, M = sc.nextInt()
     val A = Array.fill(N)(sc.nextInt())
 
-    implicit val sortedListMonoid: Monoid[List[Int]] = new Monoid[List[Int]] {
-      override def zero: List[Int] = Nil
-      override def op(a1: List[Int], a2: List[Int]): List[Int] = {
-        def loop(a1: List[Int], a2: List[Int], sorted: List[Int]): List[Int] =
-          (a1, a2) match {
-            case (Nil, Nil) => sorted
-            case (Nil, h :: t) => loop(Nil, t, h :: sorted)
-            case (h :: t, Nil) => loop(t, Nil, h :: sorted)
-            case (h1 :: t1, h2 :: _) if h1 < h2 => loop(t1, a2, h1 :: sorted)
-            case (_, h2 :: t2) => loop(a1, t2, h2 :: sorted)
-          }
-        loop(a1, a2, Nil).reverse
+    implicit val sortedListMonoid: Monoid[Vector[Int]] = new Monoid[Vector[Int]] {
+      override def zero: Vector[Int] = Vector.empty
+      override def op(a1: Vector[Int], a2: Vector[Int]): Vector[Int] = {
+        def loop(a1: Vector[Int], a2: Vector[Int], sorted: Vector[Int]): Vector[Int] =
+          if (a1.isEmpty) {
+            if (a2.isEmpty) sorted
+            else sorted ++ a2
+          } else if (a2.isEmpty) sorted ++ a1
+            else if (a1.head < a2.head) loop(a1.tail, a2, sorted :+ a1.head)
+            else loop(a1, a2.tail, sorted :+ a2.head)
+        loop(a1, a2, Vector.empty)
       }
     }
     val bit = SegmentTree(N)
     for {
       i <- 0 until N
-    } bit.update(i, A(i) :: Nil)
+    } bit.update(i, Vector(A(i)))
 
     for {
       _ <- 0 until M
     } {
       val i, j, k = sc.nextInt()
-      println(bit.query(i-1, j).take(k).last) // 二分探索をしないと実際には間に合わない
+      println(bit.query(i-1, j)(k-1))
     }
   }
 
