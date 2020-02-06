@@ -1,4 +1,4 @@
-package jp.atcoder.arc033.c
+package ant.bit
 
 object Main {
 
@@ -50,39 +50,28 @@ object Main {
   def main(args: Array[String]): Unit = {
     val sc = new java.util.Scanner(System.in)
 
-    val Q = sc.nextInt()
-    val bldr = new StringBuilder
-    val X_MAX = 200000
-    implicit val intSumGroup: Group[Int] = new Group[Int] {
+    val N = sc.nextInt()
+    val A = Array.fill(N)(sc.nextInt())
+
+    // 順番に, その数の左にある, その数より大きい数の数だけ交換する必要がある
+    // j = 0 ~ n-1まで順番に見ていき, その数より大きい数の数だけカウントを増やしていく
+    // その数以下の数は, bit.sum(A[j])で求まるので, j - bit.sum(A[j])で
+    // その数より大きい数の数が求まる
+    implicit val intGroup: Group[Int] = new Group[Int] {
       override def inverse(a: Int): Int = -a
       override def zero: Int = 0
       override def op(a1: Int, a2: Int): Int = a1 + a2
     }
-    val bit = BIT(X_MAX)
+    val bit = BIT(N)
+    var count = 0L
     for {
-      _ <- 0 until Q
+      j <- 0 until N
     } {
-      val T, X = sc.nextInt()
-      T match {
-        case 1 => bit.add(X, 1)
-        case 2 =>
-          val n = binarySearch(X)
-          bldr.append(n).append("\n")
-          bit.add(n, -1)
-      }
+      count += j - bit.sum(1, A(j))
+      bit.add(A(j), 1)
     }
 
-    def binarySearch(X: Int): Int = {
-      def loop(l: Int, r: Int): Int =
-        if (r - l > 1) {
-          val mid = l + (r - l) / 2
-          if (bit.sum(mid) >= X) loop(l, mid)
-          else loop(mid, r)
-        } else r
-      loop(-1, X_MAX)
-    }
-
-    print(bldr.result())
+    println(count)
   }
 
 }
