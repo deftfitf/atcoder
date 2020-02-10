@@ -1,5 +1,6 @@
 package jp.atcoder.abc007.d
 
+@annotation.DP.DigitDP
 object Main {
 
   def solve(S: String): Long = {

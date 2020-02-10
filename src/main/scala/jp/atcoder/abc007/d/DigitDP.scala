@@ -1,5 +1,6 @@
 package jp.atcoder.abc007.d
 
+@annotation.DP.DigitDP
 object DigitDP {
 
   def main(args: Array[String]): Unit = {
