@@ -43,6 +43,7 @@ object GRL7A {
     println(maximumFlow(X + Y + 2, G, ss, st))
   }
 
+  @annotation.Graph.FordFolkerson
   def maximumFlow(V: Int, G: Array[ArrayBuffer[Edge]], source: Int, sink: Int): Int = {
     def dfs(): Short = {
       val visit = new Array[Boolean](V)

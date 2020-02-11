@@ -9,6 +9,7 @@ object FordFolkerson {
     def reverse(flow: Int): Edge = copy(capacity = capacity + flow)
   }
 
+  @annotation.Graph.FordFolkerson
   def maxFlow(V: Int, G: Array[ArrayBuffer[Edge]], source: Int, sink: Int): Int = {
     @scala.annotation.tailrec
     def loop(flow: Int): Int = {

@@ -26,8 +26,16 @@ object Graph {
   /**
     * 全点対最短経路
     * 実行後, D(v)(v) < 0の頂点vがある場合, 負閉路があることが検出できる.
-    * O(V^3)
+    * O(V^3), 隣接行列を使う必要があり, 空間計算量O(V^2)が必要になる.
     **/
   class WarshallFloyd extends Annotation
+
+  /**
+    * Ford-Folkerson法,
+    * 最大フロー値 |f|の場合, O(|f|E)
+    *
+    * 最大フロー問題, 超入口, 超出口を導入することで, 二部グラフの最大マッチング問題が可能
+    */
+  class FordFolkerson extends Annotation
 
 }
