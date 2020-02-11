@@ -1,5 +1,6 @@
 package jp.atcoder.abc073.d
 
+@annotation.Graph.WarshallFloyd
 object Main {
 
   def main(args: Array[String]): Unit = {

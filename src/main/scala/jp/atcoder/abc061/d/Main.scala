@@ -61,17 +61,22 @@ object Main {
     // なので, 緩和した時に, それがVに対して緩和が発生したかどうか？ということを確認する必要がある
     // また, 閉路は最大V本の辺によって構成されるので, V回全ての辺に対して緩和を行わないと
     // 実際にその頂点への道の途中に閉路が存在するかどうかは確認できない
+
+    // http://sigma1113.hatenablog.com/entry/2019/08/12/130042
+    // 実際には, VE回緩和をしても検出できないケース. 閉路によっては, 伝搬させるのに足りないケースあり.
     val negative = new Array[Boolean](V+1)
-    def relax2(u: Int, v: Int, w: Int): Unit =
-      if (dist(u) != INF && dist(v) > dist(u) + w) {
-        dist(v) = dist(u) + w
-        negative(v) = true
-      }
 
     for {
       _ <- 0 until V
       edge <- edges
-    } relax2(edge.u, edge.v, edge.weight)
+    } if (dist(edge.u) != INF && dist(edge.v) > dist(edge.u) + edge.weight) {
+      dist(edge.v) = dist(edge.u) + edge.weight
+      negative(edge.v) = true
+    // もし元の点が最短経路を更新しているなら,
+    // そのうち d(v) > d(u) + w も満たされて vも更新されるから, その情報を伝搬させる.
+    } else if (negative(edge.u)) {
+      negative(edge.v) = true
+    }
 
     if (!negative(V)) Some(-result)
     else None
